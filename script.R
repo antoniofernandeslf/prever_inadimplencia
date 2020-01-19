@@ -1,12 +1,12 @@
 
 # Instalando os pacotes para o projeto 
-install.packages("Amelia")
-install.packages("caret")
-install.packages("ggplot2")
-install.packages("dplyr")
-install.packages("reshape")
-install.packages("randomForest")
-install.packages("e1071")
+#install.packages("Amelia")
+#install.packages("caret")
+#install.packages("ggplot2")
+#install.packages("dplyr")
+#install.packages("reshape")
+#install.packages("randomForest")
+#install.packages("e1071")
 
 # Carregando os pacotes 
 library(Amelia)
@@ -18,7 +18,7 @@ library(dplyr)
 library(e1071)
 
 # Carregando os datasets
-dataset <- read.csv("credit-card.csv")
+dataset <- read.csv("prever_inadimplencia/credit-card.csv")
 
 # Visualizando os dados e sua estrutura
 View(dataset)
@@ -28,7 +28,7 @@ head(dataset)
 #################### Transformando e Limpando os Dados ####################
 
 # Convertendo os atributos idade, sexo, escolaridade e estado civil para fatores (categorias)
-
+# labels = c(....) -> labels não é necessário na função cut
 # Idade
 head(dataset$AGE) 
 dataset$AGE <- cut(dataset$AGE, c(0,30,50,100), labels = c("Jovem","Adulto","Idoso"))
@@ -39,13 +39,11 @@ dataset$SEX <- cut(dataset$SEX, c(0,1,2), labels = c("Masculino","Feminino"))
 head(dataset$SEX) 
 
 # Escolaridade
-dataset$EDUCATION <- cut(dataset$EDUCATION, c(0,1,2,3,4), 
-                         labels = c("Pos Graduado","Graduado","Ensino Medio","Outros"))
+dataset$EDUCATION <- cut(dataset$EDUCATION, c(0,1,2,3,4), labels = c("Pos Graduado","Graduado","Ensino Medio","Outros"))
 head(dataset$EDUCATION) 
 
 # Estado Civil
-dataset$MARRIAGE <- cut(dataset$MARRIAGE, c(-1,0,1,2,3),
-                        labels = c("Desconhecido","Casado","Solteiro","Outros"))
+dataset$MARRIAGE <- cut(dataset$MARRIAGE, c(-1,0,1,2,3), labels = c("Desconhecido","Casado","Solteiro","Outros"))
 head(dataset$MARRIAGE) 
 
 # Convertendo a variavel que indica pagamentos para o tipo fator
@@ -117,11 +115,11 @@ testData <- dataset[-TrainingDataIndex,]
 TrainingParameters <- trainControl(method = "cv", number = 10)
 
 ############################################################################
-########################## Random Forest Classification Model ##########################
+########################## Random Forest Classification Model ##############
 ############################################################################
 
 # Construindo o Modelo
-rf_model <- randomForest(inadimplente ~ ., data = trainData)
+rf_model <- randomForest(inadimplente ~ PAY_0, data = trainData)
 rf_model
 
 # Conferindo o erro do modelo
@@ -161,7 +159,7 @@ modelo <- readRDS("rf_model.rds")
 
 
 
-#NÃƒO TESTADO
+#NÃO TESTADO
 # Calculando Precision, Recall e F1-Score, que sao metricas de avaliacao do modelo preditivo
 #y <- testData$inadimplente
 #predictions <- predictionrf
